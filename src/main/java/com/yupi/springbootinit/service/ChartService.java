@@ -1,7 +1,11 @@
 package com.yupi.springbootinit.service;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.yupi.springbootinit.model.dto.chart.ChartQueryRequest;
 import com.yupi.springbootinit.model.entity.Chart;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.yupi.springbootinit.model.vo.ChartVO;
 
 /**
 * @author 花花
@@ -10,4 +14,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface ChartService extends IService<Chart> {
 
+    void validChart(Chart chart, boolean b);
+
+    Wrapper<Chart> getQueryWrapper(ChartQueryRequest chartQueryRequest);
+
+    Page<ChartVO> getChartVOPage(Page<Chart> chartPage);
 }
