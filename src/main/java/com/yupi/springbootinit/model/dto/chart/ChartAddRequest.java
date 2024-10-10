@@ -18,11 +18,6 @@ public class ChartAddRequest implements Serializable {
     private String name;
 
     /**
-     * 图表数据
-     */
-    private String chartData;
-
-    /**
      * 图表类型
      */
     private String chartType;

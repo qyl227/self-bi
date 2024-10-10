@@ -87,7 +87,7 @@ wx:
 cos:
   client:
     accessKey: xxx
-    secretKey: xxx
+    secretKey: xxx 
     region: xxx
     bucket: xxx
 # 接口文档配置
