@@ -1,5 +1,8 @@
 package com.yupi.springbootinit.constant;
 
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
 public interface AIConstant {
     String DEFAULT_AI_MODEL = "gpt-4o-free";
     String SECRET_KEY = "Bearer kikzyYzNO6Sns";

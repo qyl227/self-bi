@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.*;
 
 import java.io.Serializable;
 import java.util.Date;
+
+import com.yupi.springbootinit.model.enums.ChartStatusEnum;
 import lombok.Data;
 
 /**
@@ -82,4 +84,12 @@ public class Chart implements Serializable {
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setStatus(ChartStatusEnum chartStatusEnum) {
+        this.status = chartStatusEnum.getValue();
+    }
 }

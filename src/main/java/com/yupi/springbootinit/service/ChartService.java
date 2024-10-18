@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 */
 public interface ChartService extends IService<Chart> {
 
-    void validChart(Chart chart, boolean b);
+    void validChart(Chart chart);
 
     Wrapper<Chart> getQueryWrapper(ChartQueryRequest chartQueryRequest);
 

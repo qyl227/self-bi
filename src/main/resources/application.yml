@@ -13,27 +13,24 @@ spring:
       matching-strategy: ant_path_matcher
   # session 配置
   session:
-    # todo 取消注释开启分布式 session（须先配置 Redis）
+    # 取消注释开启分布式 session（须先配置 Redis）
     # store-type: redis
     # 30 天过期
     timeout: 2592000
   # 数据库配置
-  # todo 需替换配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/self_bi
     username: root
     password: 071419
   # Redis 配置
-  # todo 需替换配置，然后取消注释
-#  redis:
-#    database: 1
-#    host: localhost
-#    port: 6379
-#    timeout: 5000
-#    password: 123456
+  redis:
+    database: 0
+    host: localhost
+    port: 6379
+    timeout: 5000
   # Elasticsearch 配置
-  # todo 需替换配置，然后取消注释
+  # 需替换配置，然后取消注释
 #  elasticsearch:
 #    uris: http://localhost:9200
 #    username: root
@@ -43,6 +40,7 @@ spring:
     multipart:
       # 大小限制
       max-file-size: 10MB
+      max-request-size: 50MB
 server:
   address: 0.0.0.0
   port: 8101
@@ -64,7 +62,7 @@ mybatis-plus:
 # 微信相关
 wx:
   # 微信公众平台
-  # todo 需替换配置
+  # 需替换配置
   mp:
     token: xxx
     aesKey: xxx
@@ -78,12 +76,12 @@ wx:
         port: 6379
       type: Memory
   # 微信开放平台
-  # todo 需替换配置
+  # 需替换配置
   open:
     appId: xxx
     appSecret: xxx
 # 对象存储
-# todo 需替换配置
+# 需替换配置
 cos:
   client:
     accessKey: xxx

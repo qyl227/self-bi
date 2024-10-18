@@ -16,7 +16,7 @@ public class ThrowUtils {
      * @param condition
      * @param runtimeException
      */
-    public static void throwIf(boolean condition, RuntimeException runtimeException) {
+    public static void throwIf(boolean condition, RuntimeException runtimeException) throws RuntimeException {
         if (condition) {
             throw runtimeException;
         }

@@ -13,12 +13,14 @@ import com.yupi.springbootinit.exception.ThrowUtils;
 import com.yupi.springbootinit.model.dto.chart.*;
 import com.yupi.springbootinit.model.entity.Chart;
 import com.yupi.springbootinit.model.entity.User;
+import com.yupi.springbootinit.model.enums.FileUploadBizEnum;
 import com.yupi.springbootinit.model.enums.UserRoleEnum;
 import com.yupi.springbootinit.model.vo.ChartVO;
 import com.yupi.springbootinit.service.ChartService;
 import com.yupi.springbootinit.service.UserService;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -42,38 +44,19 @@ import org.springframework.web.multipart.MultipartFile;
 public class ChartController {
 
     @Resource
-    private ChartService chartService;
+    private ChartService chartService; 
 
     @Resource
     private UserService userService;
 
+    @Resource
+    private FileController fileController; 
+
     // region 增删改查
-
-    /**
-     * 创建
-     *
-     * @param chartAddRequest
-     * @param request
-     * @return
-     */
-    @PostMapping("/add")
-    @AuthCheck(mustRole = UserConstant.USER_LOGIN_STATE)
-    public BaseResponse<Long> addChart(@RequestBody ChartAddRequest chartAddRequest, HttpServletRequest request) {
-        ThrowUtils.throwIf(Objects.isNull(chartAddRequest), ErrorCode.PARAMS_ERROR);
-        Chart chart = new Chart();
-        BeanUtils.copyProperties(chartAddRequest, chart);
-        chartService.validChart(chart, true);
-        User loginUser = userService.getLoginUser(request);
-        chart.setUserId(loginUser.getId());
-        boolean result = chartService.save(chart);
-        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
-        long newChartId = chart.getId();
-        return ResultUtils.success(newChartId);
-    }
-
     @PostMapping("/genChartByAI")
     @AuthCheck(mustRole = UserConstant.USER_LOGIN_STATE)
     public BaseResponse<ChartVO> genChartByAI(@RequestPart("file") MultipartFile multipartFile, ChartAddRequest chartAddRequest, HttpServletRequest request) {
+        fileController.validFile(multipartFile, FileUploadBizEnum.USER_CHART_ANALYSIS);
         return chartService.genChartByAI(multipartFile, chartAddRequest, request);
     }
 
@@ -117,7 +100,7 @@ public class ChartController {
         Chart chart = new Chart();
         BeanUtils.copyProperties(chartUpdateRequest, chart);
         // 参数校验
-        chartService.validChart(chart, false);
+        chartService.validChart(chart);
         long id = chartUpdateRequest.getId();
         // 判断是否存在
         Chart oldChart = chartService.getById(id); //
@@ -237,7 +220,7 @@ public class ChartController {
         Chart chart = new Chart();
         BeanUtils.copyProperties(chartEditRequest, chart);
         // 参数校验
-        chartService.validChart(chart, false);
+        chartService.validChart(chart);
         User loginUser = userService.getLoginUser(request);
         long id = chartEditRequest.getId();
         // 判断是否存在

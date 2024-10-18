@@ -2,6 +2,7 @@ package com.yupi.springbootinit.aop;
 
 import com.yupi.springbootinit.annotation.AuthCheck;
 import com.yupi.springbootinit.common.ErrorCode;
+import com.yupi.springbootinit.manager.RateLimiterManager;
 import com.yupi.springbootinit.model.entity.User;
 import com.yupi.springbootinit.model.enums.UserRoleEnum;
 import com.yupi.springbootinit.service.UserService;
@@ -28,6 +29,8 @@ public class AuthInterceptor {
 
     @Resource
     private UserService userService;
+    @Resource
+    private RateLimiterManager rateLimiterManager;
 
     /**
      * 执行拦截
@@ -44,6 +47,10 @@ public class AuthInterceptor {
         // 当前登录用户
         User loginUser = userService.getLoginUser(request);
         UserRoleEnum mustRoleEnum = UserRoleEnum.getEnumByValue(mustRole);
+        // 限流
+        if (!rateLimiterManager.tryAcquire(String.valueOf(loginUser.getId()), 2)) {
+            throw new BusinessException(ErrorCode.TOO_MANY_REQUESTS);
+        }
         // 不需要权限，放行
         if (mustRoleEnum == null) {
             return joinPoint.proceed();

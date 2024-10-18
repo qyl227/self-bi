@@ -6,6 +6,7 @@ import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Lists;
 import com.yupi.springbootinit.common.ErrorCode;
 import com.yupi.springbootinit.constant.AIConstant;
+import com.yupi.springbootinit.exception.BusinessException;
 import com.yupi.springbootinit.exception.ThrowUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,7 +37,7 @@ public class AIUtils {
                 .header("Authorization", AIConstant.SECRET_KEY)
                 .body(json, "application/json")
                 .execute(true);
-//        log.debug(response.body());
+        log.debug(response.body());
         ThrowUtils.throwIf(!response.isOk(), ErrorCode.SYSTEM_ERROR, "AI调用失败");
         String answer = JSONUtil.parseObj(response.body()).getByPath("choices.message.content", String.class);
         return answer.substring(1, answer.length() - 1); // 去掉前后的 []（hutool解析json时自己补充的）
