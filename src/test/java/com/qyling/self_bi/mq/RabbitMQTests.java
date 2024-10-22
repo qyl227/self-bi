@@ -20,6 +20,8 @@ public class RabbitMQTests {
     @Autowired
     private RabbitAdmin rabbitAdmin;
 
+
+
     @Test
     void sendSimpleMessage() {
         User user = new User();
@@ -31,11 +33,11 @@ public class RabbitMQTests {
 
     @Test
     void sendDirectMessage() {
-        rabbitTemplate.convertAndSend("test.direct", "red1", "execution", new CorrelationData(UUID.randomUUID().toString()));
+        rabbitTemplate.convertAndSend("test.direct", "red", "execution", new CorrelationData(String.valueOf(1848687931078184961L)));
     }
 
     @Test
     void sendGenChartByAI() {
-        rabbitTemplate.convertAndSend("MQConstant.GEN_CHART_BY_AI_QUEUE_NAME", 1848676060711346177L);
+        rabbitTemplate.convertAndSend(MQConstant.GEN_CHART_BY_AI_QUEUE_NAME, 1848676060711346177L);
     }
 }

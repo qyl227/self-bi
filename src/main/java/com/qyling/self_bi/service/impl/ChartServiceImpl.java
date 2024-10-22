@@ -28,6 +28,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -57,6 +58,7 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart>
     @Autowired
     private ThreadPoolExecutor threadPoolExecutor;
     @Autowired
+    @Lazy
     private MessageSupplier messageSupplier;
 
 
@@ -137,7 +139,7 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart>
         boolean save = save(chart);
         ThrowUtils.throwIf(!save, ErrorCode.OPERATION_ERROR, "数据库异常");
         // MQ异步调用AI
-        messageSupplier.sendMessage("1", chart.getId(), chart.getId());
+        messageSupplier.sendMessage(MQConstant.GEN_CHART_BY_AI_QUEUE_NAME, chart.getId(), chart.getId());
         return ResultUtils.success(ChartVO.objToVo(chart));
     }
 

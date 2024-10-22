@@ -22,12 +22,15 @@ public class RabbitConfig {
     @Resource
     private ChartService chartService;
 
-    // TODO：一个更好的实践是将其大部分代码写在生产者中
+    // TODO：有不同含义的消息时，考虑使用多个 RabbitTemplate，每个专为一个生产者服务，省去每次都设置回调带来的开销
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         log.info("Connected to RabbitMQ Host: {}", connectionFactory.getHost());
+        // 设置 MessageConverter
         rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
+        // 开启此项，才会将无法路由的消息返回给生产者
+        rabbitTemplate.setMandatory(true);
         // 配置 ConfirmCallback，处理发布确认
         rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
             if (ack) {
@@ -45,11 +48,10 @@ public class RabbitConfig {
                 log.error("Message failed to deliver. Cause: {}", cause);
             }
         });
-        // 开启此项，才会将无法路由的消息返回给生产者
-        rabbitTemplate.setMandatory(true);
+
         // 配置 ReturnCallback，处理无法路由（即到达交换机但找不到队列）的消息
         rabbitTemplate.setReturnsCallback(returned -> {
-            Long chartId = Long.valueOf(String.valueOf(returned.getMessage().getBody()));
+            Long chartId = Long.valueOf(new String(returned.getMessage().getBody()));
             Chart chart = chartService.getById(chartId);
             chart.setStatus(ChartStatusEnum.FAILED);
             chart.setExecMessage(("Routing Key : [" + returned.getRoutingKey() + "] not found"));
