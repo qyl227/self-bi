@@ -2,6 +2,7 @@ package com.qyling.self_bi.aop;
 
 import com.qyling.self_bi.annotation.AuthCheck;
 import com.qyling.self_bi.common.ErrorCode;
+import com.qyling.self_bi.constant.RateLimitConstant;
 import com.qyling.self_bi.exception.BusinessException;
 import com.qyling.self_bi.manager.RateLimiterManager;
 import com.qyling.self_bi.model.entity.User;
@@ -46,7 +47,7 @@ public class AuthInterceptor {
         User loginUser = userService.getLoginUser(request);
         UserRoleEnum mustRoleEnum = UserRoleEnum.getEnumByValue(mustRole);
         // 限流
-        if (!rateLimiterManager.tryAcquire(String.valueOf(loginUser.getId()), 2)) {
+        if (!rateLimiterManager.tryAcquire(String.valueOf(loginUser.getId()), RateLimitConstant.REQUESTS_PER_SECOND)) {
             throw new BusinessException(ErrorCode.TOO_MANY_REQUESTS);
         }
         // 不需要权限，放行

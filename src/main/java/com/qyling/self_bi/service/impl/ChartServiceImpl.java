@@ -7,6 +7,7 @@ import com.qyling.self_bi.common.BaseResponse;
 import com.qyling.self_bi.common.ErrorCode;
 import com.qyling.self_bi.common.ResultUtils;
 import com.qyling.self_bi.constant.CommonConstant;
+import com.qyling.self_bi.constant.MQConstant;
 import com.qyling.self_bi.exception.BusinessException;
 import com.qyling.self_bi.exception.ThrowUtils;
 import com.qyling.self_bi.mapper.ChartMapper;
@@ -15,6 +16,7 @@ import com.qyling.self_bi.model.entity.Chart;
 import com.qyling.self_bi.model.entity.User;
 import com.qyling.self_bi.model.enums.ChartStatusEnum;
 import com.qyling.self_bi.model.vo.ChartVO;
+import com.qyling.self_bi.mq.MessageSupplier;
 import com.qyling.self_bi.utils.ExcelUtils;
 import com.qyling.self_bi.utils.SqlUtils;
 import com.qyling.self_bi.model.dto.chart.ChartAddRequest;
@@ -54,6 +56,8 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart>
     private ElasticsearchRestTemplate elasticsearchRestTemplate;
     @Autowired
     private ThreadPoolExecutor threadPoolExecutor;
+    @Autowired
+    private MessageSupplier messageSupplier;
 
 
     public void validChart(Chart chart) {
@@ -127,37 +131,13 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart>
         validChart(chart);
         User loginUser = userService.getLoginUser(request);
         chart.setUserId(loginUser.getId());
-        // 异步调用AI
-        // TODO 考虑消息队列
-        CompletableFuture.runAsync(() -> {
-
-            chart.setStatus(ChartStatusEnum.RUNNING);
-            // excel数据转为csv格式
-            String csvData = ExcelUtils.excelToCsv(multipartFile);
-            StringBuilder sb = new StringBuilder();
-            sb.append("分析数据:\n" + csvData).append("分析目标:").append(chart.getGoal() + "\n").append("图表类型:");
-            if (StringUtils.isEmpty(chart.getChartType())) sb.append("{{未定义，请根据需求选择合适的图表类型}}");
-            else sb.append(chart.getChartType());
-            // 调用AI
-            ChartAIResponse chartAIResponse = analyzeChartByAI(sb.toString());
-            chart.setChartData(csvData);
-            BeanUtils.copyProperties(chartAIResponse, chart);
-            chart.setStatus(ChartStatusEnum.SUCCEED);
-            chart.setExecMessage("成功");
-        }, threadPoolExecutor).thenAccept(arg -> {
-            // log.error("exec");
-            boolean save = updateById(chart);
-            ThrowUtils.throwIf(!save, ErrorCode.OPERATION_ERROR, "数据库异常");
-            // 发生任意异常后，进入该代码块
-        }).exceptionally(fn -> {
-            chart.setStatus(ChartStatusEnum.FAILED);
-            log.error(Arrays.toString(fn.getStackTrace()));
-            chart.setExecMessage(fn.getMessage());
-            updateById(chart);
-            return null;
-        });
+        chart.setStatus(ChartStatusEnum.RUNNING);
+        String csvData = ExcelUtils.excelToCsv(multipartFile);
+        chart.setChartData(csvData);
         boolean save = save(chart);
         ThrowUtils.throwIf(!save, ErrorCode.OPERATION_ERROR, "数据库异常");
+        // MQ异步调用AI
+        messageSupplier.sendMessage("1", chart.getId(), chart.getId());
         return ResultUtils.success(ChartVO.objToVo(chart));
     }
 

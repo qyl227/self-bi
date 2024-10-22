@@ -34,7 +34,7 @@ public class RateLimiterManager {
      *
      * @param key  限流器的唯一标识
      * @param rate 每秒允许的请求数
-     * @return 是否获取到许可
+     * @return 是否获取到许可 boolean
      */
     public boolean tryAcquire(String key, long rate) {
         RRateLimiter rateLimiter = createRateLimiter(key, rate);

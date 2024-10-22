@@ -35,7 +35,7 @@ public class AIUtils {
         HttpResponse response = HttpRequest.post(AIConstant.AI_API_URL)
                 .header("Authorization", AIConstant.SECRET_KEY)
                 .body(json, "application/json")
-                .execute(true);
+                .execute(false);
         log.debug(response.body());
         ThrowUtils.throwIf(!response.isOk(), ErrorCode.SYSTEM_ERROR, "AI调用失败");
         String answer = JSONUtil.parseObj(response.body()).getByPath("choices.message.content", String.class);
