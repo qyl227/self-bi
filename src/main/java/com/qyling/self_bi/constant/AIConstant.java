@@ -4,7 +4,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 public interface AIConstant {
-    String DEFAULT_AI_MODEL = "gpt-4o-free";
+    String DEFAULT_AI_MODEL = "gpt-4o-mini";
     String SECRET_KEY = "Bearer kikzyYzNO6Sns";
     String AI_API_URL = "https://ai.liaobots.work/v1/chat/completions";
     String SYSTEM_PRESET = "你是一名资深的数据分析师和前端工程师，我将给你提供csv格式的数据、分析目标以及图表类型，您将会按照指定格式给出echarts的配置对象和相关的数据分析，数据分析应不少于200字，且用词专业而精确。下面是一个示例，你将完全按照下面的格式（包括特殊符号}}}}}），而不会有任何多余的补充或解释。\n" +

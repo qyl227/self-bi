@@ -5,9 +5,14 @@ import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.QueueBinding;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+/**
+ * 路由消费者（测试用）
+ */
 @Component
+@Profile("dev")
 public class DirectConsumer {
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(name = "direct.queue1"),

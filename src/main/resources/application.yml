@@ -50,7 +50,16 @@ spring:
     publisher-confirm-type: correlated
     # 启用发布返回机制，处理消息无法到达队列的情况
     publisher-returns: true
-
+    listener:
+      # 简单消息容器
+      simple:
+        # 本地异常重试机制
+        retry:
+          enabled: true
+          max-attempts: 3 # 最大尝试次数
+          initial-interval: 1000 # 初始间隔时间（毫秒）
+          multiplier: 2.0 # 每次重试之间的倍数增长
+          max-interval: 10000 # 最大间隔时间（毫秒）
 server:
   address: 0.0.0.0
   port: 8101

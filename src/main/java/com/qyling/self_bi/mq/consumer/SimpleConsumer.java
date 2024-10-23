@@ -7,12 +7,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+/**
+ * 简单、无交换机的消费者（测试用）
+ */
 @Component
 @Slf4j
+@Profile("dev")
 public class SimpleConsumer {
     @RabbitListener(queues = "simple", ackMode = "MANUAL")
     public void listenSimpleMessage(Message message, Channel channel) throws IOException {

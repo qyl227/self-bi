@@ -22,7 +22,7 @@ public class RabbitConfig {
     @Resource
     private ChartService chartService;
 
-    // TODO：有不同含义的消息时，考虑使用多个 RabbitTemplate，每个专为一个生产者服务，省去每次都设置回调带来的开销
+    // TODO：有不同含义的消息时，考虑使用多个 RabbitTemplate，每个专为一个生产者服务
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);

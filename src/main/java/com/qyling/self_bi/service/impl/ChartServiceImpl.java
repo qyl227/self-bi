@@ -16,7 +16,7 @@ import com.qyling.self_bi.model.entity.Chart;
 import com.qyling.self_bi.model.entity.User;
 import com.qyling.self_bi.model.enums.ChartStatusEnum;
 import com.qyling.self_bi.model.vo.ChartVO;
-import com.qyling.self_bi.mq.MessageSupplier;
+import com.qyling.self_bi.mq.supplier.MessageSupplier;
 import com.qyling.self_bi.utils.ExcelUtils;
 import com.qyling.self_bi.utils.SqlUtils;
 import com.qyling.self_bi.model.dto.chart.ChartAddRequest;
@@ -35,10 +35,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
