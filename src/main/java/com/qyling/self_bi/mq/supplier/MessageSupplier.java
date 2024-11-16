@@ -21,5 +21,4 @@ public class MessageSupplier {
         rabbitTemplate.convertAndSend(queueName, messageBody, new CorrelationData(String.valueOf(messageId)));
     }
 
-
 }

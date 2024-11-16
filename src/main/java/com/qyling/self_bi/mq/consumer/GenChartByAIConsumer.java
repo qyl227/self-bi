@@ -1,6 +1,5 @@
 package com.qyling.self_bi.mq.consumer;
 
-import com.alibaba.excel.util.BooleanUtils;
 import com.alibaba.excel.util.StringUtils;
 import com.qyling.self_bi.common.ErrorCode;
 import com.qyling.self_bi.constant.MQConstant;
@@ -10,21 +9,17 @@ import com.qyling.self_bi.model.dto.chart.ChartAIResponse;
 import com.qyling.self_bi.model.entity.Chart;
 import com.qyling.self_bi.model.enums.ChartStatusEnum;
 import com.qyling.self_bi.service.ChartService;
-import com.qyling.self_bi.service.impl.ChartServiceImpl;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
-import com.qyling.self_bi.utils.ExcelUtils;
 import com.rabbitmq.client.Channel;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.beans.BeansException;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 @Slf4j
