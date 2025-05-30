@@ -17,13 +17,13 @@ import com.qyling.self_bi.model.entity.User;
 import com.qyling.self_bi.model.enums.ChartStatusEnum;
 import com.qyling.self_bi.model.vo.ChartVO;
 import com.qyling.self_bi.mq.supplier.MessageSupplier;
+import com.qyling.self_bi.manager.AIManager;
 import com.qyling.self_bi.utils.ExcelUtils;
 import com.qyling.self_bi.utils.SqlUtils;
 import com.qyling.self_bi.model.dto.chart.ChartAddRequest;
 import com.qyling.self_bi.model.dto.chart.ChartQueryRequest;
 import com.qyling.self_bi.service.ChartService;
 import com.qyling.self_bi.service.UserService;
-import com.qyling.self_bi.utils.AIUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -50,11 +50,8 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart>
     implements ChartService{
     @Resource
     private UserService userService;
-
     @Resource
-    private ElasticsearchRestTemplate elasticsearchRestTemplate;
-    @Autowired
-    private ThreadPoolExecutor threadPoolExecutor;
+    private AIManager aiManager;
     @Autowired
     @Lazy
     private MessageSupplier messageSupplier;
@@ -113,7 +110,7 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart>
     @Override
     public ChartAIResponse analyzeChartByAI(String userContent) {
         ThrowUtils.throwIf(StringUtils.isBlank(userContent), ErrorCode.PARAMS_ERROR, "请求参数错误");
-        String genResult = AIUtils.doChat(userContent);
+        String genResult = aiManager.doChat(userContent);
         String[] strings = genResult.split("}}}}}");
         ChartAIResponse chartAIResponse = new ChartAIResponse();
         ThrowUtils.throwIf(strings.length != 2, ErrorCode.OPERATION_ERROR, "处理AI结果失败");

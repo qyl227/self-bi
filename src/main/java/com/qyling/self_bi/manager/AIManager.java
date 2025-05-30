@@ -1,4 +1,4 @@
-package com.qyling.self_bi.utils;
+package com.qyling.self_bi.manager;
 
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
@@ -7,21 +7,27 @@ import com.google.common.collect.Lists;
 import com.qyling.self_bi.common.ErrorCode;
 import com.qyling.self_bi.constant.AIConstant;
 import com.qyling.self_bi.exception.ThrowUtils;
+import com.qyling.self_bi.model.properties.AIServiceProperties;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * ai服务中间件
+ */
+@Service
 @Slf4j
-public class AIUtils {
+public class AIManager {
 
-    public static String doChat(String csvData) {
-        return doChat(csvData, AIConstant.DEFAULT_AI_MODEL);
-    }
+    @Resource
+    private AIServiceProperties aiServiceProperties;
 
-    public static String doChat(String userContent, String model) {
+    public String doChat(String userContent) {
         Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("model", model);
+        requestBody.put("model", aiServiceProperties.getModel());
         Map<String, String> systemRuleMap = new HashMap<>();
         systemRuleMap.put("role", "system");
         systemRuleMap.put("content", AIConstant.SYSTEM_PRESET);
@@ -32,8 +38,8 @@ public class AIUtils {
         String json = JSONUtil.toJsonStr(requestBody);
         log.debug(json);
 
-        HttpResponse response = HttpRequest.post(AIConstant.AI_API_URL)
-                .header("Authorization", AIConstant.SECRET_KEY)
+        HttpResponse response = HttpRequest.post(aiServiceProperties.getApiUrl())
+                .header("Authorization", aiServiceProperties.getSecretKey())
                 .body(json, "application/json")
                 .execute(false);
         log.debug(response.body());

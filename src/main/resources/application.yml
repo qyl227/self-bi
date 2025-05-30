@@ -107,6 +107,12 @@ cos:
     secretKey: xxx 
     region: xxx
     bucket: xxx
+# AI相关配置
+my-ai:
+  model: deepseek-reasoner
+  secret-key: Bearer sk-ba0f8ed3aeaa422ba35e82bdcbe5bc64
+  api-url: https://api.deepseek.com/chat/completions
+
 # 接口文档配置
 knife4j:
   enable: true
