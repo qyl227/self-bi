@@ -15,7 +15,11 @@ public class AiManagerTest {
     private AIManager aiManager;
     @Test
     void doChat() {
-        log.info(aiManager.doChat("分析数据:\n" +
+        log.info(aiManager.doChat(
+                "gpt-4o-mini",
+                "",
+                "https://ai.liaobots.work/v1/chat/completions",
+                "分析数据:\n" +
                 "日期,销量\n" +
                 "1,20\n" +
                 "2,40\n" +

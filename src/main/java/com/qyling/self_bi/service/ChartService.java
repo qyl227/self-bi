@@ -26,7 +26,7 @@ public interface ChartService extends IService<Chart> {
 
     Page<ChartVO> getChartVOPage(Page<Chart> chartPage);
 
-    ChartAIResponse analyzeChartByAI(String csvData);
+    ChartAIResponse analyzeChartByAI(String aiModel, String secretKey, String apiUrl, String csvData);
 
     BaseResponse<ChartVO> genChartByAI(MultipartFile multipartFile, ChartAddRequest chartAddRequest, HttpServletRequest request);
 }

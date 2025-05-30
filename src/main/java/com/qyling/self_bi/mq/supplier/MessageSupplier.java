@@ -13,8 +13,6 @@ import javax.annotation.Resource;
 public class MessageSupplier {
     @Resource
     private RabbitTemplate rabbitTemplate;
-    @Resource
-    private ChartService chartService;
 
 
     public void sendMessage(String queueName, Object messageBody, Long messageId) {

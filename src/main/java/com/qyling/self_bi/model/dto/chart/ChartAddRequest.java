@@ -22,5 +22,20 @@ public class ChartAddRequest implements Serializable {
      */
     private String chartType;
 
+    /**
+     * ai模型
+     */
+    private String aiModel;
+
+    /**
+     * 调用ai所需的密钥
+     */
+    private String secretKey;
+
+    /**
+     * ai服务商的url
+     */
+    private String apiUrl;
+
     private static final long serialVersionUID = 1L;
 }

@@ -110,7 +110,7 @@ cos:
 # AI相关配置
 my-ai:
   model: deepseek-reasoner
-  secret-key: Bearer sk-ba0f8ed3aeaa422ba35e82bdcbe5bc64
+  secret-key:
   api-url: https://api.deepseek.com/chat/completions
 
 # 接口文档配置

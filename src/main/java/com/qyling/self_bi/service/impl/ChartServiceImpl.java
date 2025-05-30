@@ -1,5 +1,6 @@
 package com.qyling.self_bi.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -15,6 +16,7 @@ import com.qyling.self_bi.model.dto.chart.ChartAIResponse;
 import com.qyling.self_bi.model.entity.Chart;
 import com.qyling.self_bi.model.entity.User;
 import com.qyling.self_bi.model.enums.ChartStatusEnum;
+import com.qyling.self_bi.model.message.GenChartMessage;
 import com.qyling.self_bi.model.vo.ChartVO;
 import com.qyling.self_bi.mq.supplier.MessageSupplier;
 import com.qyling.self_bi.manager.AIManager;
@@ -108,9 +110,9 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart>
     }
 
     @Override
-    public ChartAIResponse analyzeChartByAI(String userContent) {
+    public ChartAIResponse analyzeChartByAI(String aiModel, String secretKey, String apiUrl, String userContent) {
         ThrowUtils.throwIf(StringUtils.isBlank(userContent), ErrorCode.PARAMS_ERROR, "请求参数错误");
-        String genResult = aiManager.doChat(userContent);
+        String genResult = aiManager.doChat(aiModel, secretKey, apiUrl, userContent);
         String[] strings = genResult.split("}}}}}");
         ChartAIResponse chartAIResponse = new ChartAIResponse();
         ThrowUtils.throwIf(strings.length != 2, ErrorCode.OPERATION_ERROR, "处理AI结果失败");
@@ -126,6 +128,10 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart>
         Chart chart = new Chart();
         BeanUtils.copyProperties(chartAddRequest, chart);
         validChart(chart);
+        String aiModel = chartAddRequest.getAiModel();
+        String secretKey = chartAddRequest.getSecretKey();
+        String apiUrl = chartAddRequest.getApiUrl();
+
         User loginUser = userService.getLoginUser(request);
         chart.setUserId(loginUser.getId());
         chart.setStatus(ChartStatusEnum.RUNNING);
@@ -133,8 +139,14 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart>
         chart.setChartData(csvData);
         boolean save = save(chart);
         ThrowUtils.throwIf(!save, ErrorCode.OPERATION_ERROR, "数据库异常");
+        GenChartMessage genChartMessage = GenChartMessage.builder()
+                .chartId(chart.getId())
+                .model(aiModel)
+                .secretKey(secretKey)
+                .apiUrl(apiUrl)
+                .build();
         // MQ异步调用AI
-        messageSupplier.sendMessage(MQConstant.GEN_CHART_BY_AI_QUEUE_NAME, chart.getId(), chart.getId());
+        messageSupplier.sendMessage(MQConstant.GEN_CHART_BY_AI_QUEUE_NAME, genChartMessage, chart.getId());
         return ResultUtils.success(ChartVO.objToVo(chart));
     }
 
