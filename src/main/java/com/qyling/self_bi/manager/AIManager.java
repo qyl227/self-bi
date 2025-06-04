@@ -8,7 +8,6 @@ import com.google.common.collect.Lists;
 import com.qyling.self_bi.common.ErrorCode;
 import com.qyling.self_bi.constant.AIConstant;
 import com.qyling.self_bi.exception.BusinessException;
-import com.qyling.self_bi.exception.ThrowUtils;
 import com.qyling.self_bi.model.properties.AIServiceProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
